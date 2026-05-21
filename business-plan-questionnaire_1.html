@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Plan Questionnaire — Femora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #7F77DD;
+    --purple-light: #EEEDFE;
+    --purple-mid: #534AB7;
+    --purple-dark: #3C3489;
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --gray-100: #F7F6F3;
+    --gray-200: #EDECE8;
+    --gray-400: #B4B2A9;
+    --gray-600: #888780;
+    --gray-800: #2C2C2A;
+    --text: #1A1A18;
+    --text-muted: #6B6A65;
+    --border: rgba(0,0,0,0.10);
+    --border-focus: #7F77DD;
+    --white: #ffffff;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--gray-100);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--purple-mid); letter-spacing: -0.01em; }
+  .logo span { color: var(--gray-400); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; margin-left: 10px; }
+
+  /* Progress */
+  .progress-wrap { height: 3px; background: var(--gray-200); }
+  .progress-fill { height: 100%; background: var(--purple); transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+  /* Main layout */
+  main { flex: 1; display: flex; justify-content: center; padding: 3rem 1.5rem 4rem; }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 640px;
+    padding: 2.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+  }
+
+  /* Section header */
+  .s-icon {
+    width: 44px; height: 44px;
+    background: var(--purple-light);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+    font-size: 20px;
+  }
+  .s-label { font-size: 11px; font-weight: 500; color: var(--purple); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+  .s-title { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text); margin-bottom: 6px; line-height: 1.2; }
+  .s-sub { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 2rem; }
+  .divider { border: none; border-top: 1px solid var(--border); margin-bottom: 1.75rem; }
+
+  /* Question */
+  .q-block { margin-bottom: 1.5rem; }
+  .q-label { font-size: 14px; font-weight: 500; color: var(--text); display: block; margin-bottom: 4px; }
+  .q-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+
+  textarea, input[type=text] {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--gray-100);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    outline: none;
+    transition: border 0.2s, background 0.2s;
+  }
+  textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+  textarea:focus, input[type=text]:focus { border-color: var(--border-focus); background: var(--white); box-shadow: 0 0 0 3px rgba(127,119,221,0.12); }
+
+  /* Tags */
+  .tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    padding: 7px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--gray-100);
+    user-select: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tag:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-light); }
+  .tag.active { background: var(--purple-light); border-color: var(--purple); color: var(--purple-dark); font-weight: 500; }
+
+  /* Navigation */
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2.25rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .step-dots { display: flex; gap: 6px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 3px; background: var(--gray-200); transition: all 0.25s; }
+  .dot.active { width: 20px; background: var(--purple); }
+  .dot.done { background: var(--teal); }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--gray-100); }
+  .btn.primary { background: var(--purple); border-color: var(--purple); color: var(--white); }
+  .btn.primary:hover { background: var(--purple-mid); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* Done / Result screen */
+  .done-wrap { text-align: center; padding: 1rem 0 0.5rem; }
+  .done-icon { font-size: 48px; margin-bottom: 1.25rem; }
+  .done-title { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 0.5rem; }
+  .done-sub { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 420px; margin: 0 auto 1.75rem; }
+
+  /* Result output */
+  .result-area {
+    background: var(--gray-100);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: var(--text);
+    text-align: left;
+    max-height: 520px;
+    overflow-y: auto;
+    margin-bottom: 1.25rem;
+  }
+  .result-area h2 { font-size: 15px; font-weight: 500; color: var(--purple-mid); margin: 1.25rem 0 0.4rem; text-transform: uppercase; letter-spacing: 0.06em; font-family: 'DM Sans', sans-serif; }
+  .result-area h2:first-child { margin-top: 0; }
+  .result-area p { margin-bottom: 0.6rem; }
+
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    padding: 8px 18px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-right: 8px;
+  }
+  .copy-btn:hover { background: var(--gray-100); }
+
+  .loading { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 14px; padding: 2rem 0; justify-content: center; }
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--gray-200); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Footer */
+  footer { text-align: center; padding: 1.5rem; font-size: 12px; color: var(--gray-400); }
+
+  @media(max-width:500px) {
+    .card { padding: 1.75rem 1.25rem; }
+    .s-title { font-size: 20px; }
+    header { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Femora <span>Business Plan Builder</span></div>
+  <div style="font-size:12px;color:var(--text-muted)" id="hdr-step">Step 1 of 6</div>
+</header>
+<div class="progress-wrap"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+<main>
+  <div class="card" id="card"></div>
+</main>
+
+<footer>Built by Femora &mdash; Brand Performance Infrastructure</footer>
+
+<script>
+const SECTIONS = [
+  {
+    icon:"💡", label:"Section 1 of 6", title:"The Business Idea",
+    sub:"Start with the core of what you're building.",
+    questions:[
+      {id:"idea", type:"textarea", label:"What is your business idea?", hint:"Describe it in 2–3 sentences as if explaining to a stranger."},
+      {id:"problem", type:"textarea", label:"What specific problem does it solve?", hint:"Be concrete — who suffers from this problem today?"},
+      {id:"solution", type:"textarea", label:"What is your solution?", hint:"How does your product or service fix it better than existing options?"}
+    ]
+  },
+  {
+    icon:"🎯", label:"Section 2 of 6", title:"Target Market",
+    sub:"Define exactly who you are building this for.",
+    questions:[
+      {id:"customer", type:"textarea", label:"Who is your ideal customer?", hint:"Demographics, profession, location, income level, behaviour."},
+      {id:"market_size", type:"text", label:"How large is your target market?", hint:"Estimated number of potential customers or annual market spend."},
+      {id:"segments", type:"tags", label:"What best describes your market?", tags:["B2B","B2C","B2B2C","Government","Non-profit","Mixed"]}
+    ]
+  },
+  {
+    icon:"💰", label:"Section 3 of 6", title:"Revenue & Pricing",
+    sub:"How the business makes money.",
+    questions:[
+      {id:"revenue_model", type:"tags", label:"Primary revenue model", tags:["Product sales","Service retainer","Subscription","Commission/margin","Licensing","Freemium","Event-based","Other"]},
+      {id:"pricing", type:"textarea", label:"How will you price your offer?", hint:"Describe your pricing tiers, rates, or packages."},
+      {id:"revenue_goal", type:"text", label:"Target revenue in year 1", hint:"Rough figure is fine — e.g. ₦5M, ₦50M, $100K"}
+    ]
+  },
+  {
+    icon:"⚡", label:"Section 4 of 6", title:"Competition & Advantage",
+    sub:"What makes you the better option.",
+    questions:[
+      {id:"competitors", type:"textarea", label:"Who are your top competitors?", hint:"Name them — direct or indirect alternatives."},
+      {id:"advantage", type:"textarea", label:"What is your unfair advantage?", hint:"Skills, IP, network, speed, cost, brand, technology, access, etc."},
+      {id:"positioning", type:"text", label:"Complete this: 'Unlike [competitor], we ___'", hint:"Your core positioning statement."}
+    ]
+  },
+  {
+    icon:"📣", label:"Section 5 of 6", title:"Go-to-Market",
+    sub:"How you will acquire and retain customers.",
+    questions:[
+      {id:"channels", type:"tags", label:"Primary acquisition channels", tags:["Social media","Referrals","Cold outreach","Events / trade shows","SEO / content","Paid ads","Partnerships","PR","Direct sales"]},
+      {id:"first_customers", type:"textarea", label:"How will you land your first 10 customers?", hint:"Be specific — who will you call, where will you go?"},
+      {id:"retention", type:"textarea", label:"How will you keep customers coming back?", hint:"Loyalty, quality, community, contracts, exclusivity, etc."}
+    ]
+  },
+  {
+    icon:"📊", label:"Section 6 of 6", title:"Financials & Milestones",
+    sub:"Resources, costs, and what success looks like.",
+    questions:[
+      {id:"startup_cost", type:"text", label:"Estimated startup cost", hint:"Total capital needed to launch — e.g. ₦2M, $10K"},
+      {id:"key_costs", type:"textarea", label:"What are your 3 biggest operating costs?", hint:"Rent, staff, software, materials, logistics, etc."},
+      {id:"milestones", type:"textarea", label:"What are your 3 key milestones in the next 12 months?", hint:"Specific, measurable — first sale, product launch, ₦X revenue, team hire, etc."}
+    ]
+  }
+];
+
+const answers = {};
+let current = 0;
+let globalRawText = ""; // Holds plaintext for file downloads
+
+function tv(id){ return (answers[id]||[]).join(", ") || "—"; }
+function sv(id){ return (answers[id]||"").trim() || "—"; }
+
+function dots(){
+  return SECTIONS.map((_,i)=>`<div class="dot ${i===current?'active':i<current?'done':''}"></div>`).join('');
+}
+
+function render(idx){
+  const s = SECTIONS[idx];
+  document.getElementById('hdr-step').textContent = `Step ${idx+1} of ${SECTIONS.length}`;
+  document.getElementById('prog').style.width = ((idx/SECTIONS.length)*100)+'%';
+
+  let html = `
+    <div class="s-icon">${s.icon}</div>
+    <div class="s-label">${s.label}</div>
+    <div class="s-title">${s.title}</div>
+    <div class="s-sub">${s.sub}</div>
+    <hr class="divider">
+  `;
+
+  s.questions.forEach(q => {
+    html += `<div class="q-block">`;
+    html += `<label class="q-label" for="q_${q.id}">${q.label}</label>`;
+    if(q.hint) html += `<div class="q-hint">${q.hint}</div>`;
+    if(q.type==='textarea'){
+      html += `<textarea id="q_${q.id}" placeholder="Your answer...">${answers[q.id]||''}</textarea>`;
+    } else if(q.type==='text'){
+      html += `<input type="text" id="q_${q.id}" placeholder="Your answer..." value="${(answers[q.id]||'').replace(/"/g,'&quot;')}">`;
+    } else if(q.type==='tags'){
+      const sel = answers[q.id]||[];
+      html += `<div class="tag-group" id="tg_${q.id}">`;
+      q.tags.forEach(t => {
+        html += `<div class="tag${sel.includes(t)?' active':''}" data-tag="${t}" data-field="${q.id}">${t}</div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  const isLast = idx === SECTIONS.length - 1;
+  html += `
+    <div class="nav">
+      <button class="btn" onclick="go(-1)" ${idx===0?'style="visibility:hidden"':''}>← Back</button>
+      <div class="step-dots">${dots()}</div>
+      <button class="btn primary" onclick="go(1)">${isLast ? 'Generate my plan →' : 'Next →'}</button>
+    </div>
+  `;
+
+  document.getElementById('card').innerHTML = html;
+
+  document.querySelectorAll('.tag').forEach(el => {
+    el.addEventListener('click', () => {
+      const field = el.dataset.field, tag = el.dataset.tag;
+      if(!answers[field]) answers[field] = [];
+      if(el.classList.contains('active')){
+        answers[field] = answers[field].filter(t=>t!==tag);
+        el.classList.remove('active');
+      } else {
+        answers[field].push(tag);
+        el.classList.add('active');
+      }
+    });
+  });
+}
+
+function save(){
+  SECTIONS[current].questions.forEach(q => {
+    if(q.type!=='tags'){
+      const el = document.getElementById('q_'+q.id);
+      if(el) answers[q.id] = el.value.trim();
+    }
+  });
+}
+
+function go(dir){
+  save();
+  const next = current + dir;
+  if(next < 0) return;
+  if(next >= SECTIONS.length){ generate(); return; }
+  current = next;
+  render(current);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function generate(){
+  document.getElementById('hdr-step').textContent = 'Generating…';
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('card').innerHTML = `
+    <div class="done-wrap">
+      <div class="loading"><div class="spinner"></div> Building your business plan…</div>
+    </div>
+  `;
+
+  // Bundling questionnaire variables securely to dispatch to the backend controller
+  const payload = {
+    idea: sv('idea'),
+    problem: sv('problem'),
+    solution: sv('solution'),
+    customer: sv('customer'),
+    market_size: sv('market_size'),
+    segments: tv('segments'),
+    revenue_model: tv('revenue_model'),
+    pricing: sv('pricing'),
+    revenue_goal: sv('revenue_goal'),
+    competitors: sv('competitors'),
+    advantage: sv('advantage'),
+    positioning: sv('positioning'),
+    channels: tv('channels'),
+    first_customers: sv('first_customers'),
+    retention: sv('retention'),
+    startup_cost: sv('startup_cost'),
+    key_costs: sv('key_costs'),
+    milestones: sv('milestones')
+  };
+
+  try {
+    // Relocated API fetch destination pipeline to route safely through server.js backend architecture
+    const res = await fetch("/api/generate", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    
+    if (!res.ok) throw new Error("Server communication fault");
+    
+    const data = await res.json();
+    globalRawText = data.businessPlan;
+    showResult(globalRawText);
+  } catch(e) {
+    showResult("Something went wrong generating the plan. Please copy your answers and try again.");
+  }
+}
+
+function showResult(text){
+  document.getElementById('hdr-step').textContent = 'Your Business Plan';
+  const formatted = text
+    .replace(/^(EXECUTIVE SUMMARY|BUSINESS DESCRIPTION|MARKET ANALYSIS|COMPETITIVE ADVANTAGE|REVENUE MODEL & PRICING|GO-TO-MARKET STRATEGY|FINANCIAL OVERVIEW|12-MONTH MILESTONES)/gm, '<h2>$1</h2>')
+    .replace(/\n\n/g,'<p></p>')
+    .replace(/\n/g,'<br>');
+
+  document.getElementById('card').innerHTML = `
+    <div class="done-wrap">
+      <div class="done-icon">📋</div>
+      <div class="done-title">Your Business Plan</div>
+      <div class="done-sub">Structured from your answers. Review, refine, and present with confidence.</div>
+    </div>
+    <div class="result-area" id="result-text">${formatted}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:0.25rem">
+      <button class="copy-btn" onclick="copyText()">📄 Copy plan</button>
+      <button class="copy-btn" onclick="downloadText()">📥 Download plan (.txt)</button>
+      <button class="copy-btn" onclick="restart()">↺ Start over</button>
+    </div>
+  `;
+}
+
+function copyText(){
+  const el = document.getElementById('result-text');
+  navigator.clipboard.writeText(el.innerText).then(()=>{
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Copied';
+    setTimeout(()=>{ btn.innerHTML = orig; }, 2000);
+  });
+}
+
+function downloadText(){
+  if(!globalRawText) return;
+  const blob = new Blob([globalRawText], { type: 'text/plain;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "Femora_Business_Plan.txt");
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function restart(){
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  globalRawText = "";
+  current = 0;
+  render(0);
+  document.getElementById('hdr-step').textContent = 'Step 1 of 6';
+  document.getElementById('prog').style.width = '0%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+render(0);
+</script>
+</body>
+</html>
