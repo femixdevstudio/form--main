@@ -411,23 +411,14 @@ async function generate(){
 }
 
 function showResult(text){
-  document.getElementById('hdr-step').textContent = 'Your Business Plan';
-  const formatted = text
-    .replace(/^(EXECUTIVE SUMMARY|BUSINESS DESCRIPTION|MARKET ANALYSIS|COMPETITIVE ADVANTAGE|REVENUE MODEL & PRICING|GO-TO-MARKET STRATEGY|FINANCIAL OVERVIEW|12-MONTH MILESTONES)/gm, '<h2>$1</h2>')
-    .replace(/\n\n/g,'<p></p>')
-    .replace(/\n/g,'<br>');
-
+  document.getElementById('hdr-step').textContent = 'Complete';
+  
   document.getElementById('card').innerHTML = `
     <div class="done-wrap">
-      <div class="done-icon">📋</div>
-      <div class="done-title">Your Business Plan</div>
-      <div class="done-sub">Structured from your answers. Review, refine, and present with confidence.</div>
+      <div class="done-title">Thank You</div>
     </div>
-    <div class="result-area" id="result-text">${formatted}</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:0.25rem">
-      <button class="copy-btn" onclick="copyText()">📄 Copy plan</button>
-      <button class="copy-btn" onclick="downloadText()">📥 Download plan (.txt)</button>
-      <button class="copy-btn" onclick="restart()">↺ Start over</button>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:1.5rem;justify-content:center">
+      <button class="btn primary" onclick="downloadText()">Download a Copy</button>
     </div>
   `;
 }
