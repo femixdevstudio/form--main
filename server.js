@@ -2,12 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { GoogleGenAI } = require('@google/genai');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize the free Google GenAI client using your environment variable
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Initialize Supabase client
+const supabaseUrl = 'https://nkweofvwxtaoshjwarwg.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rd2VvZnZ3eHRhb3NoandhcndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNzA2NjEsImV4cCI6MjA5NDk0NjY2MX0.RUrzW-l8y5Il03zLYxlv4LtJmwETi4e0ZtYGKuW88D8';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Initialize the Google GenAI client with API key
+const ai = new GoogleGenAI({ apiKey: 'AIzaSyDNYe6ep_1O4_FLYj0TD_YEJ-ACyuEHbck' });
 
 app.use(cors());
 app.use(express.json());
