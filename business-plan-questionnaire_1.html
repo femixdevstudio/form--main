@@ -421,25 +421,25 @@ async function generate(){
   document.getElementById('prog').style.width = '100%';
   document.getElementById('card').innerHTML = `
     <div class="done-wrap">
-      <div class="loading"><div class="spinner"></div> Building your business plan…</div>
+      <div class="loading"><div class="spinner"></div> Building your premium business plan…</div>
     </div>
   `;
 
-  // Bundling questionnaire variables securely to dispatch to the backend controller
+  // Bundling answers properly (sending tags as arrays or clean strings)
   const payload = {
     idea: sv('idea'),
     problem: sv('problem'),
     solution: sv('solution'),
     customer: sv('customer'),
     market_size: sv('market_size'),
-    segments: tv('segments'),
-    revenue_model: tv('revenue_model'),
+    segments: answers['segments'] || [], // Sends tag choices as arrays
+    revenue_model: answers['revenue_model'] || [],
     pricing: sv('pricing'),
     revenue_goal: sv('revenue_goal'),
     competitors: sv('competitors'),
     advantage: sv('advantage'),
     positioning: sv('positioning'),
-    channels: tv('channels'),
+    channels: answers['channels'] || [],
     first_customers: sv('first_customers'),
     retention: sv('retention'),
     startup_cost: sv('startup_cost'),
@@ -448,7 +448,6 @@ async function generate(){
   };
 
   try {
-    // Relocated API fetch destination pipeline to route safely through server.js backend architecture
     const res = await fetch("/api/generate", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -458,80 +457,36 @@ async function generate(){
     if (!res.ok) throw new Error("Server communication fault");
     
     const data = await res.json();
-    globalRawText = data.businessPlan;
+    globalRawText = data.businessPlan; // Save plaintext for the download button
     showResult(globalRawText);
   } catch(e) {
-    showResult("Something went wrong generating the plan. Please copy your answers and try again.");
+    showResult("Something went wrong generating the plan. Please check your network or Vercel logs and try again.");
   }
 }
 
 function showResult(text){
-  document.getElementById('hdr-step').textContent = 'Review & Download';
-  document.getElementById('prog').style.width = '100%';
-
-  // Map all answers into a structured preview grouped by section
-  const preview = [
-    { title: "The Business Idea", items: [
-      { label: "Business idea",  key: "idea"     },
-      { label: "Problem",        key: "problem"  },
-      { label: "Solution",       key: "solution" },
-    ]},
-    { title: "Target Market", items: [
-      { label: "Ideal customer", key: "customer"    },
-      { label: "Market size",    key: "market_size" },
-      { label: "Market type",    key: "segments"    },
-    ]},
-    { title: "Revenue & Pricing", items: [
-      { label: "Revenue model",  key: "revenue_model" },
-      { label: "Pricing",        key: "pricing"       },
-      { label: "Year 1 target",  key: "revenue_goal"  },
-    ]},
-    { title: "Competition & Advantage", items: [
-      { label: "Competitors",    key: "competitors" },
-      { label: "Advantage",      key: "advantage"   },
-      { label: "Positioning",    key: "positioning" },
-    ]},
-    { title: "Go-to-Market", items: [
-      { label: "Channels",          key: "channels"        },
-      { label: "First 10 customers",key: "first_customers" },
-      { label: "Retention",         key: "retention"       },
-    ]},
-    { title: "Financials & Milestones", items: [
-      { label: "Startup cost",   key: "startup_cost" },
-      { label: "Key costs",      key: "key_costs"    },
-      { label: "12M milestones", key: "milestones"   },
-    ]},
-  ];
-
-  let previewHtml = '';
-  preview.forEach(s => {
-    previewHtml += `<div class="preview-section">
-      <div class="preview-section-title">${s.title}</div>`;
-    s.items.forEach(item => {
-      const val = answers[item.key];
-      const display = Array.isArray(val)
-        ? (val.length ? val.join(', ') : '—')
-        : (val || '—');
-      previewHtml += `<div class="preview-row">
-        <div class="preview-label">${item.label}</div>
-        <div class="preview-val">${display}</div>
-      </div>`;
-    });
-    previewHtml += `</div>`;
-  });
+  document.getElementById('hdr-step').textContent = 'Your Strategic Plan';
+  
+  // Format section titles nicely for the visual preview box
+  const formatted = text
+    .replace(/^(EXECUTIVE SUMMARY|BUSINESS DESCRIPTION|MARKET ANALYSIS|COMPETITIVE ADVANTAGE|REVENUE MODEL & PRICING|GO-TO-MARKET STRATEGY|FINANCIAL OVERVIEW|12-MONTH MILESTONES)/gm, '<h2>$1</h2>')
+    .replace(/\n\n/g,'<p></p>')
+    .replace(/\n/g,'<br>');
 
   document.getElementById('card').innerHTML = `
     <div class="done-wrap">
-      <div class="done-icon">✅</div>
-      <div class="done-title">Your Plan Is Ready</div>
-      <div class="done-sub">Your business plan has been generated. Review your inputs below, then download your full strategy document.</div>
+      <div class="done-icon">📋</div>
+      <div class="done-title">Your Completed Blueprint</div>
+      <div class="done-sub">Review your business infrastructure blocks below. Download or copy a local copy.</div>
     </div>
-
-    <div class="preview-area">${previewHtml}</div>
-
-    <button class="btn-download" onclick="downloadText()">
-      📥 Download Business Plan (.txt)
-    </button>
+    
+    <div class="result-area" id="result-text">${formatted}</div>
+    
+    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:0.5rem">
+      <button class="btn primary" onclick="downloadText()">📥 Download plan (.txt)</button>
+      <button class="btn" onclick="copyText()">📄 Copy plain text</button>
+      <button class="btn" onclick="restart()">↺ Start over</button>
+    </div>
   `;
 }
 
@@ -545,8 +500,12 @@ function copyText(){
   });
 }
 
+// Activated Native File Download System
 function downloadText(){
-  if(!globalRawText) return;
+  if(!globalRawText) {
+    alert("No generated content found to download.");
+    return;
+  }
   const blob = new Blob([globalRawText], { type: 'text/plain;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

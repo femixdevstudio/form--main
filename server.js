@@ -55,8 +55,8 @@ Top Operating Costs: ${d.key_costs || '—'}
 
     const rawPlan = response.text;
 
-    // 3. Admin database insertion pipeline
-    // We sanitize array vectors into unified database strings to match basic table setups smoothly
+    // AUTOMATIC SUBMISSION TO SUPABASE
+    // Sanitizes incoming arrays into safe, flat comma-separated text lines
     const { error } = await supabase
       .from('submissions')
       .insert([
@@ -79,15 +79,15 @@ Top Operating Costs: ${d.key_costs || '—'}
           startup_cost: d.startup_cost || '',
           key_costs: d.key_costs || '',
           milestones: d.milestones || '',
-          generated_plan: rawPlan
+          generated_plan: rawPlan // Saves the complete resulting document for admin access
         }
       ]);
 
     if (error) {
-      console.error("Supabase Database Sync Failure:", error);
+      console.error("Automatic submission to database dropped:", error);
     }
 
-    // 4. Send response payload safely back to client view
+    // Return plan safely back to browser
     res.json({ businessPlan: rawPlan });
   } catch (error) {
     console.error("Master Processing Exception:", error);
