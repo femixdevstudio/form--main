@@ -1,13 +1,9 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/api/generate",
-      "destination": "/api/generate"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/business-plan-questionnaire_1.html"
-    }
+  "builds": [
+    { "src": "server.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/server.js" }
   ]
 }
