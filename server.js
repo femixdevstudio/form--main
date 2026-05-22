@@ -19,7 +19,7 @@ app.post('/api/generate', async (req, res) => {
   try {
     const d = req.body;
 
-    // Construct the business plan prompt exactly as before
+    // 1. Construct the prompt for Gemini
     const prompt = `You are a senior business strategist. Based on the answers below, write a complete, concrete, and professional business plan. Use the following section headers exactly (in uppercase): EXECUTIVE SUMMARY, BUSINESS DESCRIPTION, MARKET ANALYSIS, COMPETITIVE ADVANTAGE, REVENUE MODEL & PRICING, GO-TO-MARKET STRATEGY, FINANCIAL OVERVIEW, 12-MONTH MILESTONES. Each section should be detailed, direct, and actionable — no filler. Write in confident declarative prose. No bullet point lists.
 
 Business Idea: ${d.idea}
@@ -41,7 +41,7 @@ Startup Cost: ${d.startup_cost}
 Top Operating Costs: ${d.key_costs}
 12-Month Milestones: ${d.milestones}`;
 
-    // Request text generation via Google's free Gemini model
+    // 2. Generate the plan using Gemini
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
@@ -49,10 +49,42 @@ Top Operating Costs: ${d.key_costs}
 
     const rawPlan = response.text;
 
+    // 3. COMPLETE ADMIN LOGGING: Save absolutely every field into Supabase
+    const { error } = await supabase
+      .from('submissions')
+      .insert([
+        {
+          idea: d.idea,
+          problem: d.problem,
+          solution: d.solution,
+          customer: d.customer,
+          market_size: d.market_size,
+          segments: d.segments,
+          revenue_model: d.revenue_model,
+          pricing: d.pricing,
+          revenue_goal: d.revenue_goal,
+          competitors: d.competitors,
+          advantage: d.advantage,
+          positioning: d.positioning,
+          channels: d.channels,
+          first_customers: d.first_customers,
+          retention: d.retention,
+          startup_cost: d.startup_cost,
+          key_costs: d.key_costs,
+          milestones: d.milestones,
+          generated_plan: rawPlan // Saves the output text too!
+        }
+      ]);
+
+    if (error) {
+      console.error("Supabase Full Logging Error:", error);
+    }
+
+    // 4. Return the plan to the user frontend browser
     res.json({ businessPlan: rawPlan });
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    res.status(500).json({ error: "Failed to build business plan via free tier" });
+    console.error("API Processing Error:", error);
+    res.status(500).json({ error: "Failed to process request" });
   }
 });
 
