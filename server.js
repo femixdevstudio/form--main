@@ -19,29 +19,29 @@ app.post('/api/generate', async (req, res) => {
   try {
     const d = req.body;
 
-    // 1. Construct the prompt for Gemini
+    // 1. Compile the comprehensive design strategy prompt
     const prompt = `You are a senior business strategist. Based on the answers below, write a complete, concrete, and professional business plan. Use the following section headers exactly (in uppercase): EXECUTIVE SUMMARY, BUSINESS DESCRIPTION, MARKET ANALYSIS, COMPETITIVE ADVANTAGE, REVENUE MODEL & PRICING, GO-TO-MARKET STRATEGY, FINANCIAL OVERVIEW, 12-MONTH MILESTONES. Each section should be detailed, direct, and actionable — no filler. Write in confident declarative prose. No bullet point lists.
 
-Business Idea: ${d.idea}
-Problem Being Solved: ${d.problem}
-Proposed Solution: ${d.solution}
-Ideal Customer: ${d.customer}
-Market Size: ${d.market_size}
-Market Type: ${d.segments}
-Revenue Model: ${d.revenue_model}
-Pricing Strategy: ${d.pricing}
-Year 1 Revenue Target: ${d.revenue_goal}
-Top Competitors: ${d.competitors}
-Unfair Advantage: ${d.advantage}
-Positioning Statement: Unlike our competitors, we ${d.positioning}
-Acquisition Channels: ${d.channels}
-Path to First 10 Customers: ${d.first_customers}
-Retention Strategy: ${d.retention}
-Startup Cost: ${d.startup_cost}
-Top Operating Costs: ${d.key_costs}
-12-Month Milestones: ${d.milestones}`;
+Business Idea: ${d.idea || '—'}
+Problem Being Solved: ${d.problem || '—'}
+Proposed Solution: ${d.solution || '—'}
+Ideal Customer: ${d.customer || '—'}
+Market Size: ${d.market_size || '—'}
+Market Type: ${d.segments || '—'}
+Revenue Model: ${d.revenue_model || '—'}
+Pricing Strategy: ${d.pricing || '—'}
+Year 1 Revenue Target: ${d.revenue_goal || '—'}
+Top Competitors: ${d.competitors || '—'}
+Unfair Advantage: ${d.advantage || '—'}
+Positioning Statement: Unlike our competitors, we ${d.positioning || '—'}
+Acquisition Channels: ${d.channels || '—'}
+Path to First 10 Customers: ${d.first_customers || '—'}
+Retention Strategy: ${d.retention || '—'}
+Startup Cost: ${d.startup_cost || '—'}
+Top Operating Costs: ${d.key_costs || '—'}
+12-Month Milestones: ${d.milestones || '—'}`;
 
-    // 2. Generate the plan using Gemini
+    // 2. Call Google Gemini to compile text output loops
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
@@ -49,42 +49,43 @@ Top Operating Costs: ${d.key_costs}
 
     const rawPlan = response.text;
 
-    // 3. COMPLETE ADMIN LOGGING: Save absolutely every field into Supabase
+    // 3. Admin database insertion pipeline
+    // We sanitize array vectors into unified database strings to match basic table setups smoothly
     const { error } = await supabase
       .from('submissions')
       .insert([
         {
-          idea: d.idea,
-          problem: d.problem,
-          solution: d.solution,
-          customer: d.customer,
-          market_size: d.market_size,
-          segments: d.segments,
-          revenue_model: d.revenue_model,
-          pricing: d.pricing,
-          revenue_goal: d.revenue_goal,
-          competitors: d.competitors,
-          advantage: d.advantage,
-          positioning: d.positioning,
-          channels: d.channels,
-          first_customers: d.first_customers,
-          retention: d.retention,
-          startup_cost: d.startup_cost,
-          key_costs: d.key_costs,
-          milestones: d.milestones,
-          generated_plan: rawPlan // Saves the output text too!
+          idea: d.idea || '',
+          problem: d.problem || '',
+          solution: d.solution || '',
+          customer: d.customer || '',
+          market_size: d.market_size || '',
+          segments: Array.isArray(d.segments) ? d.segments.join(', ') : String(d.segments || ''),
+          revenue_model: Array.isArray(d.revenue_model) ? d.revenue_model.join(', ') : String(d.revenue_model || ''),
+          pricing: d.pricing || '',
+          revenue_goal: d.revenue_goal || '',
+          competitors: d.competitors || '',
+          advantage: d.advantage || '',
+          positioning: d.positioning || '',
+          channels: Array.isArray(d.channels) ? d.channels.join(', ') : String(d.channels || ''),
+          first_customers: d.first_customers || '',
+          retention: d.retention || '',
+          startup_cost: d.startup_cost || '',
+          key_costs: d.key_costs || '',
+          milestones: d.milestones || '',
+          generated_plan: rawPlan
         }
       ]);
 
     if (error) {
-      console.error("Supabase Full Logging Error:", error);
+      console.error("Supabase Database Sync Failure:", error);
     }
 
-    // 4. Return the plan to the user frontend browser
+    // 4. Send response payload safely back to client view
     res.json({ businessPlan: rawPlan });
   } catch (error) {
-    console.error("API Processing Error:", error);
-    res.status(500).json({ error: "Failed to process request" });
+    console.error("Master Processing Exception:", error);
+    res.status(500).json({ error: "Failed to compile response blocks cleanly." });
   }
 });
 
